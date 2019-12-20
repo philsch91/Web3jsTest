@@ -6,17 +6,24 @@ import { Transaction } from './models/transaction';
 import { Account } from './models/account';
 import { NewTransactionForm } from './components/NewTransactionForm'
 import { TransactionList } from './components/TransactionList'
+import { AccountList } from './components/AccountList'
 import { WalletDiv } from './components/WalletDiv';
 import './App.css';
 
 interface State {
+  account: Account
   accounts: Account[];
   newTransaction: Transaction;
   transactions: Transaction[];
 }
 
 class App extends React.Component<{}, State> {
+  web3: Web3;
   state = {
+    account: {
+      id: "test",
+      name: "testname"
+    },
     accounts: [],
     newTransaction: {
       number: 1, 
@@ -26,11 +33,19 @@ class App extends React.Component<{}, State> {
     transactions: []
   };
 
+  constructor(props: any){
+    super(props);
+    //8546
+    this.web3 = new Web3('ws://localhost:7545');
+  }
+
   render() {
     return (
       <div>
         <h2>Web3.js Test</h2>
-        <WalletDiv accounts={this.state.accounts} onDelete={this.changeAccount} />
+        <WalletDiv accounts={this.state.accounts} onChange={this.changeAccount} />
+        <AccountList accounts={this.state.accounts} onChange={this.changeAccount} />
+        <button onClick={this.showAccount}>Change</button>
         <NewTransactionForm
           transaction={this.state.newTransaction}
           onAdd={this.addTransaction}
@@ -78,6 +93,25 @@ class App extends React.Component<{}, State> {
         ...previousState.accounts.filter(account => account.id !== accountToChange.id)
       ]
     }));
+  };
+
+  private showAccount = () => {
+    this.web3.eth.getAccounts((error: Error, accounts: string[]) => {
+      //accounts.length
+      for(let name in accounts){
+        console.log(name);
+        //let account: Account = {id:"0", name:"test"};
+        let account = {id:"0", name: "test"} as Account;
+      }
+      //this.state.accounts = 
+    });
+    /*
+    this.setState(previousState => ({
+      accounts: [
+        ...previousState.accounts.filter(account => account.id !== accountToChange.id)
+      ]
+    }));
+    */
   };
 }
 

@@ -8,7 +8,7 @@ interface Props {
   onChange: (account: Account) => void;
 }
 
-export const WalletDiv: FunctionComponent<Props> = ({ accounts, onChange }) => (
+export const AccountList: FunctionComponent<Props> = ({ accounts, onChange }) => (
   <ul>
     {accounts.map(account => (
       <AccountItem account={account} onDelete={onChange} />
