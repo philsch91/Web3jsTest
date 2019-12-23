@@ -8,6 +8,7 @@ import { NewTransactionForm } from './components/NewTransactionForm'
 import { TransactionList } from './components/TransactionList'
 import { AccountList } from './components/AccountList'
 import { WalletDiv } from './components/WalletDiv';
+import { AccountForm } from './components/AccountForm';
 import './App.css';
 
 interface State {
@@ -22,7 +23,8 @@ class App extends React.Component<{}, State> {
   state = {
     account: {
       id: "test",
-      name: "testname"
+      name: "testname",
+      privateKey: ""
     },
     accounts: [],
     newTransaction: {
@@ -40,12 +42,13 @@ class App extends React.Component<{}, State> {
   }
 
   render() {
+    //<button onClick={this.readAccounts}>Change</button>
     return (
       <div>
         <h2>Web3.js Test</h2>
-        <WalletDiv accounts={this.state.accounts} onChange={this.changeAccount} />
+        <WalletDiv account={this.state.account} />
+        <AccountForm onSwitch={this.readAccounts} />
         <AccountList accounts={this.state.accounts} onChange={this.changeAccount} />
-        <button onClick={this.showAccount}>Change</button>
         <NewTransactionForm
           transaction={this.state.newTransaction}
           onAdd={this.addTransaction}
@@ -87,31 +90,46 @@ class App extends React.Component<{}, State> {
     }));
   };
 
-  private changeAccount = (accountToChange: Account) => {
+  private handleAccountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      account: {
+        ...this.state.account,
+        name: event.target.value
+      }
+    });
+  };
+
+  private changeAccount = (newAccount: Account) => {
     this.setState(previousState => ({
-      accounts: [
-        ...previousState.accounts.filter(account => account.id !== accountToChange.id)
-      ]
+      account: newAccount
     }));
   };
 
-  private showAccount = () => {
+  private readAccounts = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     this.web3.eth.getAccounts((error: Error, accounts: string[]) => {
-      //accounts.length
+      var accountList:Account[] = new Array(accounts.length)
+      var i = 0
       for(let name in accounts){
         console.log(name);
         //let account: Account = {id:"0", name:"test"};
-        let account = {id:"0", name: "test"} as Account;
+        //let account = {id:"0", name: "test"} as Account;
+        let account = {id:i.toString(), name: name} as Account;
+        accountList[i] = account
+        i++
       }
-      //this.state.accounts = 
+      
+      //this.state.accounts = accountList
+      this.setState(previousState => ({
+        /*
+        accounts: [
+          ...previousState.accounts.filter(account => account.id !== accountToChange.id)
+        ] */
+        accounts: accountList
+      }));
     });
-    /*
-    this.setState(previousState => ({
-      accounts: [
-        ...previousState.accounts.filter(account => account.id !== accountToChange.id)
-      ]
-    }));
-    */
+    
   };
 }
 

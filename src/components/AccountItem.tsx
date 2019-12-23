@@ -1,20 +1,19 @@
 import React, { FunctionComponent } from "react";
-
 import { Account } from "../models/account";
 
 interface Props {
   account: Account;
-  onDelete: (account: Account) => void;
+  onChange: (account: Account) => void;
 }
 
-export const AccountItem: FunctionComponent<Props> = ({ account, onDelete }) => {
+export const AccountItem: FunctionComponent<Props> = ({ account, onChange }) => {
   const onClick = () => {
-    onDelete(account);
+    onChange(account);
   };
 
   return (
     <li>
-      {account.name} <button onClick={onClick}>Change</button>
+      {account.id} {account.name} {account.privateKey} <button onClick={onClick}>Change</button>
     </li>
   );
 };

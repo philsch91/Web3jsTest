@@ -10,8 +10,7 @@ interface Props {
 export const NewTransactionForm: React.FunctionComponent<Props> = ({
     onChange,
     onAdd,
-    transaction
-}) => (
+    transaction}) => (
     <form onSubmit={onAdd}>
       <input onChange={onChange} value={transaction.name} />
       <button type="submit">Create a transaction</button>

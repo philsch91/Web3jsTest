@@ -11,7 +11,7 @@ interface Props {
 export const AccountList: FunctionComponent<Props> = ({ accounts, onChange }) => (
   <ul>
     {accounts.map(account => (
-      <AccountItem account={account} onDelete={onChange} />
+      <AccountItem account={account} onChange={onChange} />
     ))}
   </ul>
 );
