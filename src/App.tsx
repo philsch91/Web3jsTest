@@ -4,41 +4,49 @@ import Web3 from 'web3';
 
 import { Transaction } from './models/transaction';
 import { Account } from './models/account';
+
 import { NewTransactionForm } from './components/NewTransactionForm'
 import { TransactionList } from './components/TransactionList'
 import { AccountList } from './components/AccountList'
 import { WalletDiv } from './components/WalletDiv';
 import { AccountForm } from './components/AccountForm';
+import { LoginForm } from './components/LoginForm';
+
+import { Web3Manager } from './helpers/Web3Manager';
+
 import './App.css';
 
 interface State {
+  address: String;
   account: Account
   accounts: Account[];
-  newTransaction: Transaction;
   transactions: Transaction[];
+  newTransaction: Transaction;
 }
 
 class App extends React.Component<{}, State> {
-  web3: Web3;
+  //web3: Web3;
   state = {
+    address: "",
     account: {
       id: "test",
       name: "testname",
-      privateKey: ""
+      privateKey: "",
+      balance: ""
     },
     accounts: [],
+    transactions: [],
     newTransaction: {
       number: 1, 
       id: "test",
       name: ""
-    },
-    transactions: []
+    }
   };
 
   constructor(props: any){
     super(props);
     //8546
-    this.web3 = new Web3('ws://localhost:7545');
+    //this.web3 = new Web3('ws://localhost:7545');
   }
 
   render() {
@@ -47,6 +55,10 @@ class App extends React.Component<{}, State> {
       <div>
         <h2>Web3.js Test</h2>
         <WalletDiv account={this.state.account} />
+        <LoginForm address={this.state.address}
+          onChange={this.handleAddressChange}
+          onClick={this.connect}
+        />
         <AccountForm onSwitch={this.readAccounts} />
         <AccountList accounts={this.state.accounts} onChange={this.changeAccount} />
         <NewTransactionForm
@@ -57,6 +69,24 @@ class App extends React.Component<{}, State> {
         <TransactionList transactions={this.state.transactions} onDelete={this.deleteTransaction} />
       </div>
     );
+  }
+
+  private handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      address: event.target.value
+      /*
+      address: {
+        ...this.state.address,
+        name: event.target.value
+      } */
+    });
+  };
+
+  private connect = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const web3Manager = Web3Manager.getInstance();
+    web3Manager.setProvider('ws://' + this.state.address);
   }
 
   private addTransaction = (event: React.FormEvent<HTMLFormElement>) => {
@@ -107,8 +137,10 @@ class App extends React.Component<{}, State> {
 
   private readAccounts = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    this.web3.eth.getAccounts((error: Error, accounts: string[]) => {
+    const web3Manager = Web3Manager.getInstance();
+    
+    //this.web3.eth.getAccounts((error: Error, accounts: string[]) => {
+    web3Manager.eth.getAccounts((error: Error, accounts: string[]) => {
       var accountList:Account[] = new Array(accounts.length)
       var i = 0
       for(let name in accounts){
