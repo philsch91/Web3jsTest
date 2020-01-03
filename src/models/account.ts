@@ -1,5 +1,5 @@
 export interface Account {
-    id: string;
+    address: string;
     name: string;
     privateKey: string;
     balance: string;

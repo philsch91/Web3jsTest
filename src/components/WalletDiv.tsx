@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const WalletDiv: React.FunctionComponent<Props> = ({ account }) => (
-  <p>{account.id} {account.name} {account.privateKey}</p>
+  <p>{account.name} {account.address} {account.privateKey} {account.balance}</p>
   /*
   //<input onChange={onChange} value={transaction.name} />
   <ul>

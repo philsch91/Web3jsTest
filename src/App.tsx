@@ -29,8 +29,8 @@ class App extends React.Component<{}, State> {
   state = {
     address: "",
     account: {
-      id: "test",
-      name: "testname",
+      name: "test",
+      address: "",
       privateKey: "",
       balance: ""
     },
@@ -86,7 +86,8 @@ class App extends React.Component<{}, State> {
     event.preventDefault();
 
     const web3Manager = Web3Manager.getInstance();
-    web3Manager.setProvider('ws://' + this.state.address);
+    const provider = new Web3.providers.WebsocketProvider('ws://' + this.state.address);
+    web3Manager.setProvider(provider);
   }
 
   private addTransaction = (event: React.FormEvent<HTMLFormElement>) => {
@@ -133,35 +134,47 @@ class App extends React.Component<{}, State> {
     this.setState(previousState => ({
       account: newAccount
     }));
+
+    const web3Manager = Web3Manager.getInstance();
+    web3Manager.eth.defaultAccount = newAccount.address;
   };
 
   private readAccounts = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const web3Manager = Web3Manager.getInstance();
     
-    //this.web3.eth.getAccounts((error: Error, accounts: string[]) => {
+    //web3Manager.readAccounts((error: Error, accounts: Account[]) => {
+    web3Manager.readAccountsAndBalances((error: Error, accounts: Account[]) => {
+      this.setState(previousState => ({
+        accounts: accounts
+      }));
+    });
+    
+  };
+
+  private getAccounts = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const web3Manager = Web3Manager.getInstance();
+    
     web3Manager.eth.getAccounts((error: Error, accounts: string[]) => {
       var accountList:Account[] = new Array(accounts.length)
       var i = 0
-      for(let name in accounts){
-        console.log(name);
+      for(let key in accounts){
+        const address: string = accounts[key];
+        console.log(address);
         //let account: Account = {id:"0", name:"test"};
         //let account = {id:"0", name: "test"} as Account;
-        let account = {id:i.toString(), name: name} as Account;
+        let account = { name: i.toString(), address: address, privateKey: "", balance: "" } as Account;
         accountList[i] = account
         i++
       }
       
       //this.state.accounts = accountList
       this.setState(previousState => ({
-        /*
-        accounts: [
-          ...previousState.accounts.filter(account => account.id !== accountToChange.id)
-        ] */
+        //accounts: [...previousState.accounts.filter(account => account.id !== accountToChange.id)]
         accounts: accountList
       }));
     });
-    
   };
 }
 
