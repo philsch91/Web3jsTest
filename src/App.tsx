@@ -2,9 +2,6 @@ import React from 'react';
 import logo from './logo.svg';
 import Web3 from 'web3';
 
-import { Transaction } from './models/transaction';
-import { Account } from './models/account';
-
 import { NewTransactionForm } from './components/NewTransactionForm'
 import { TransactionList } from './components/TransactionList'
 import { AccountList } from './components/AccountList'
@@ -12,7 +9,12 @@ import { WalletDiv } from './components/WalletDiv';
 import { AccountForm } from './components/AccountForm';
 import { LoginForm } from './components/LoginForm';
 
+import { Transaction } from './models/transaction';
+import { Account } from './models/account';
+
+import { Web3Util } from './Web3Util';
 import { Web3Manager } from './helpers/Web3Manager';
+import { AccountDelegate } from './interfaces/AccountDelegate';
 
 import './App.css';
 
@@ -24,7 +26,7 @@ interface State {
   newTransaction: Transaction;
 }
 
-class App extends React.Component<{}, State> {
+class App extends React.Component<{}, State, AccountDelegate> {
   //web3: Web3;
   state = {
     address: "",
@@ -46,7 +48,7 @@ class App extends React.Component<{}, State> {
   constructor(props: any){
     super(props);
     //8546
-    //this.web3 = new Web3('ws://localhost:7545');
+    this.balanceDidChange = this.balanceDidChange.bind(this);
   }
 
   render() {
@@ -137,6 +139,9 @@ class App extends React.Component<{}, State> {
 
     const web3Manager = Web3Manager.getInstance();
     web3Manager.eth.defaultAccount = newAccount.address;
+    web3Manager.accountDelegate = this;
+    web3Manager.stopUpdatingAccount();
+    web3Manager.startUpdatingAccount();
   };
 
   private readAccounts = (event: React.FormEvent<HTMLFormElement>) => {
@@ -148,9 +153,15 @@ class App extends React.Component<{}, State> {
       this.setState(previousState => ({
         accounts: accounts
       }));
-    });
-    
+    }); 
   };
+
+  public balanceDidChange(util: Web3Util, updatedAccount: Account) {
+    console.log(updatedAccount);
+    this.setState(previousState => ({
+      account: updatedAccount
+    }));
+  }
 
   private getAccounts = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

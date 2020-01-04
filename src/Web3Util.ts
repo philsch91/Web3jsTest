@@ -1,7 +1,17 @@
 import Web3 from 'web3';
 import { Account } from './models/account';
+import { AccountDelegate } from './interfaces/AccountDelegate';
 
 export class Web3Util extends Web3 {
+    private accountUpdateTimerId: number | null = null;
+    private accountUpdateFlag: boolean = false;
+    public accountDelegate: AccountDelegate | null = null;
+
+    public constructor(){
+        super();
+        this.updateAccount = this.updateAccount.bind(this);
+    }
+    
     public static loadWeb3(){
         /*
         if(window.web3 !== undefined){
@@ -75,5 +85,54 @@ export class Web3Util extends Web3 {
             
             callback(error, accountList);
         });
+    }
+
+    public startUpdatingAccount(): void {
+        //this.accountUpdateFlag = true;
+        //this.updateAccountWithTimeout();
+        this.accountUpdateTimerId = window.setInterval(this.updateAccount, 5000);
+    }
+
+    public stopUpdatingAccount(): void {
+        //this.accountUpdateFlag = false;
+        if(this.accountUpdateTimerId == null){
+            return;
+        }
+        clearInterval(this.accountUpdateTimerId);
+    }
+
+    private async updateAccount(): Promise<void> {
+        const address = this.eth.defaultAccount;
+        if(address == null){
+            return;
+        }
+
+        const balance = await this.eth.getBalance(address);
+        let account = {address: address, balance: balance} as Account;
+            
+        if(this.accountDelegate == null){
+            return;
+        }
+        
+        this.accountDelegate.balanceDidChange(this, account);
+    }
+
+    private async updateAccountWithTimeout(): Promise<void> {
+        const address = this.eth.defaultAccount;
+        if(address == null){
+            return;
+        }
+        
+        while(this.accountUpdateFlag){
+            const balance = await this.eth.getBalance(address);
+            let account = {address: address, balance: balance} as Account;
+            
+            if(this.accountDelegate == null){
+                break;
+            }
+            //var func = function(){};
+            //var t = this.accountDelegate.balanceDidChange(this, account);
+            setTimeout(this.accountDelegate.balanceDidChange, 5000, this, account);
+        }
     }
 }
