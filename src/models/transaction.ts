@@ -1,5 +1,12 @@
 export interface Transaction {
-    number: number;
-    id: string;
-    name: string;
+    from: String | Number;
+    to?: String;
+    value?: String | Number // BN | BigNumber 
+    data?: String;
+    nonce?: Number;
+    chain?: String;
+    hardfork?: String;
+    common?: Object;
+    id: number;
+    name: String;
 }

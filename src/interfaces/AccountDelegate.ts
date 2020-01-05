@@ -1,6 +1,6 @@
-import { Web3Util } from "../Web3Util";
+import { Web3Manager } from "../Web3Manager";
 import { Account } from '../models/account';
 
 export interface AccountDelegate {
-    balanceDidChange(util: Web3Util, account: Account): void;
+    balanceDidChange(manager: Web3Manager, account: Account): void;
 }

@@ -2,7 +2,7 @@
 
 ### Setup
 
-npm install -g typescript
-npx create-react-app web3jstest --typescript
-cd web3jstest
-npm install web3
+1. npm install -g typescript
+2. npx create-react-app web3jstest --typescript
+3. cd web3jstest
+4. npm install web3

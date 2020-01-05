@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import { Account } from './models/account';
 import { AccountDelegate } from './interfaces/AccountDelegate';
 
-export class Web3Util extends Web3 {
+export class Web3Manager extends Web3 {
     private accountUpdateTimerId: number | null = null;
     private accountUpdateFlag: boolean = false;
     public accountDelegate: AccountDelegate | null = null;

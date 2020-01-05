@@ -1,6 +1,6 @@
-import { Web3Util } from '../Web3Util';
+import { Web3Manager } from '../Web3Manager';
 
-export class Web3Manager extends Web3Util {
+export class Web3NodeManager extends Web3Manager {
     private static instance: Web3Manager;
 
     private constructor(){
