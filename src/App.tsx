@@ -1,13 +1,21 @@
 import React from 'react';
 import logo from './logo.svg';
+import {
+  Route,
+  NavLink,
+  HashRouter
+} from "react-router-dom";
 import Web3 from 'web3';
 
-import { NewTransactionForm } from './components/NewTransactionForm'
-import { TransactionList } from './components/TransactionList'
-import { AccountList } from './components/AccountList'
+import { NewTransactionForm } from './components/NewTransactionForm';
+import { TransactionList } from './components/TransactionList';
+import { AccountList } from './components/AccountList';
 import { WalletDiv } from './components/WalletDiv';
 import { AccountForm } from './components/AccountForm';
 import { LoginForm } from './components/LoginForm';
+import { HomeComponent } from './components/HomeComponent';
+import { LoginComponent } from './components/LoginComponent';
+import { TransactionComponent } from './components/TransactionComponent';
 
 import { Transaction } from './models/transaction';
 import { Account } from './models/account';
@@ -54,24 +62,35 @@ class App extends React.Component<{}, State, AccountDelegate> {
   render() {
     //<button onClick={this.readAccounts}>Change</button>
     return (
-      <div>
-        <h2>Web3.js Test</h2>
-        <WalletDiv account={this.state.account} />
-        <LoginForm address={this.state.address}
-          onChange={this.handleAddressChange}
-          onClick={this.connect}
-        />
-        <AccountForm onSwitch={this.readAccounts} />
-        <AccountList accounts={this.state.accounts} onChange={this.changeAccount} />
-        <NewTransactionForm
-          transaction={this.state.newTransaction}
-          onAdd={this.addTransaction}
-          onChange={this.handleTransactionChange}
-          onChangeTo={this.handleTransactionChangeTo}
-          onChangeValue={this.handleTransactionChangeValue}
-        />
-        <TransactionList transactions={this.state.transactions} onDelete={this.deleteTransaction} />
-      </div>
+      <HashRouter>
+        <div>
+          <h1>Web3.js Test</h1>
+          <ul className="header" >
+            <li><NavLink to="/">Home</NavLink></li>
+            <li><NavLink to="/login">Login</NavLink></li>
+            <li><NavLink to="/transactions">Transactions</NavLink></li>
+          </ul>
+          <div className="content">
+            <Route exact path="/" component={HomeComponent} />
+            <Route path="/login" render={props => <LoginComponent {...props} address={this.state.address}
+              onAddressChange={this.handleAddressChange} onClick={this.connect} 
+              onSwitch={this.readAccounts} accounts={this.state.accounts} 
+              onAccountChange={this.changeAccount} />} />
+            <Route path="/transactions" component={TransactionComponent} />
+            <WalletDiv account={this.state.account} />
+          </div>
+          
+          
+          <NewTransactionForm
+            transaction={this.state.newTransaction}
+            onAdd={this.addTransaction}
+            onChange={this.handleTransactionChange}
+            onChangeTo={this.handleTransactionChangeTo}
+            onChangeValue={this.handleTransactionChangeValue}
+          />
+          <TransactionList transactions={this.state.transactions} onDelete={this.deleteTransaction} />
+        </div>
+      </HashRouter>
     );
   }
 
