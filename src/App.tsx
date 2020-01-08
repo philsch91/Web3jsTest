@@ -66,7 +66,7 @@ class App extends React.Component<{}, State, AccountDelegate> {
         <div>
           <h1>Web3.js Test</h1>
           <ul className="header" >
-            <li><NavLink to="/">Home</NavLink></li>
+            <li><NavLink exact to="/">Home</NavLink></li>
             <li><NavLink to="/login">Login</NavLink></li>
             <li><NavLink to="/transactions">Transactions</NavLink></li>
           </ul>
