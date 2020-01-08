@@ -65,30 +65,32 @@ class App extends React.Component<{}, State, AccountDelegate> {
       <HashRouter>
         <div>
           <h1>Web3.js Test</h1>
-          <ul className="header" >
+          <ul className="header">
             <li><NavLink exact to="/">Home</NavLink></li>
             <li><NavLink to="/login">Login</NavLink></li>
             <li><NavLink to="/transactions">Transactions</NavLink></li>
           </ul>
           <div className="content">
+            <WalletDiv account={this.state.account} />
             <Route exact path="/" component={HomeComponent} />
-            <Route path="/login" render={props => <LoginComponent {...props} address={this.state.address}
+            <Route path="/login" render={props => 
+              <LoginComponent {...props}
+              address={this.state.address}
               onAddressChange={this.handleAddressChange} onClick={this.connect} 
               onSwitch={this.readAccounts} accounts={this.state.accounts} 
               onAccountChange={this.changeAccount} />} />
-            <Route path="/transactions" component={TransactionComponent} />
-            <WalletDiv account={this.state.account} />
+            <Route path="/transactions" render={props => 
+              <TransactionComponent {...props}
+                transaction={this.state.newTransaction}
+                onChange={this.handleTransactionChange}
+                onChangeTo={this.handleTransactionChangeTo}
+                onChangeValue={this.handleTransactionChangeValue}
+                onAdd={this.addTransaction}
+                transactions={this.state.transactions}
+                onDelete={this.deleteTransaction}
+              />} /*component={TransactionComponent}*/ />
+            
           </div>
-          
-          
-          <NewTransactionForm
-            transaction={this.state.newTransaction}
-            onAdd={this.addTransaction}
-            onChange={this.handleTransactionChange}
-            onChangeTo={this.handleTransactionChangeTo}
-            onChangeValue={this.handleTransactionChangeValue}
-          />
-          <TransactionList transactions={this.state.transactions} onDelete={this.deleteTransaction} />
         </div>
       </HashRouter>
     );
