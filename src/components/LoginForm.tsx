@@ -1,17 +1,17 @@
 import React from 'react';
 
 interface Props {
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onClick: (event: React.FormEvent<HTMLFormElement>) => void;
     address: string;
+    onAddressChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onClick: (event: React.FormEvent<HTMLFormElement>) => void;
 }
-  
+
 export const LoginForm: React.FunctionComponent<Props> = ({
-    onChange,
-    onClick,
-    address}) => (
+  address,
+  onAddressChange,
+  onClick}) => (
     <form onSubmit={onClick}>
-      <input onChange={onChange} value={address} />
+      <input onChange={onAddressChange} value={address} />
       <button type="submit">Connect</button>
     </form>
 );

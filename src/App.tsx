@@ -76,8 +76,11 @@ class App extends React.Component<{}, State, AccountDelegate> {
             <Route path="/login" render={props => 
               <LoginComponent {...props}
               address={this.state.address}
-              onAddressChange={this.handleAddressChange} onClick={this.connect} 
-              onSwitch={this.readAccounts} accounts={this.state.accounts} 
+              onAddressChange={this.handleAddressChange}
+              onClick={this.connect}
+              privateKey={this.state.account.privateKey}
+              onPrivatKeyChange={this.handlePrivateKeyChange}
+              onSwitch={this.readAccounts} accounts={this.state.accounts}
               onAccountChange={this.changeAccount} />} />
             <Route path="/transactions" render={props => 
               <TransactionComponent {...props}
@@ -106,6 +109,14 @@ class App extends React.Component<{}, State, AccountDelegate> {
       } */
     });
   };
+
+  private handlePrivateKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    var account: Account = this.state.account;
+    account.privateKey = event.target.value;
+    this.setState({
+      account: account
+    });
+  }
 
   private connect = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -180,6 +191,7 @@ class App extends React.Component<{}, State, AccountDelegate> {
   };
 
   private changeAccount = (newAccount: Account) => {
+    newAccount.privateKey = this.state.account.privateKey;
     this.setState(previousState => ({
       account: newAccount
     }));
@@ -205,8 +217,11 @@ class App extends React.Component<{}, State, AccountDelegate> {
 
   public balanceDidChange(manager: Web3Manager, updatedAccount: Account) {
     console.log(updatedAccount);
+    var account: Account = this.state.account;
+    account.balance = updatedAccount.balance;
     this.setState(previousState => ({
-      account: updatedAccount
+      //account: updatedAccount
+      account: account
     }));
   }
 

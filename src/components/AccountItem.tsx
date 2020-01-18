@@ -12,8 +12,6 @@ export const AccountItem: FunctionComponent<Props> = ({ account, onChange }) => 
   };
 
   return (
-    <li>
-      {account.name} {account.address} {account.privateKey} <button onClick={onClick}>Change</button>
-    </li>
+    <li>{account.name} {account.address} <button onClick={onClick}>Change</button></li>
   );
 };
