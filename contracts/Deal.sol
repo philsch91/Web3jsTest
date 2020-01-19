@@ -1,4 +1,5 @@
-pragma solidity ^0.5.11;
+pragma solidity >=0.6.1;
+//pragma solidity ^0.5.11;
 
 contract Deal {
 

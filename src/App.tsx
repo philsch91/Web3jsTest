@@ -6,6 +6,8 @@ import {
   HashRouter
 } from "react-router-dom";
 import Web3 from 'web3';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { NewTransactionForm } from './components/NewTransactionForm';
 import { TransactionList } from './components/TransactionList';
@@ -16,22 +18,29 @@ import { LoginForm } from './components/LoginForm';
 import { HomeComponent } from './components/HomeComponent';
 import { LoginComponent } from './components/LoginComponent';
 import { TransactionComponent } from './components/TransactionComponent';
+import { ProductComponent } from './components/ProductComponent';
 
 import { Transaction } from './models/transaction';
 import { Account } from './models/account';
+import { Product } from './models/product';
 
 import { Web3Manager } from './Web3Manager';
 import { Web3NodeManager } from './helpers/Web3NodeManager';
 import { AccountDelegate } from './interfaces/AccountDelegate';
 
+import * as dealContract from './static/DealContract.json'
+
 import './App.css';
+
 
 interface State {
   address: String;
   account: Account
   accounts: Account[];
-  transactions: Transaction[];
   newTransaction: Transaction;
+  transactions: Transaction[];
+  newProduct: Product;
+  products: Product[];
 }
 
 class App extends React.Component<{}, State, AccountDelegate> {
@@ -45,12 +54,19 @@ class App extends React.Component<{}, State, AccountDelegate> {
       balance: ""
     },
     accounts: [],
-    transactions: [],
     newTransaction: {
       from: "", 
       id: 0,
       name: ""
-    }
+    },
+    transactions: [],
+    newProduct: {
+      id: 0,
+      name: "",
+      buyer: "",
+      courier: ""
+    },
+    products: []
   };
 
   constructor(props: any){
@@ -69,6 +85,7 @@ class App extends React.Component<{}, State, AccountDelegate> {
             <li><NavLink exact to="/">Home</NavLink></li>
             <li><NavLink to="/login">Login</NavLink></li>
             <li><NavLink to="/transactions">Transactions</NavLink></li>
+            <li><NavLink to="/products">Products</NavLink></li>
           </ul>
           <div className="content">
             <WalletDiv account={this.state.account} />
@@ -92,7 +109,13 @@ class App extends React.Component<{}, State, AccountDelegate> {
                 transactions={this.state.transactions}
                 onDelete={this.deleteTransaction}
               />} /*component={TransactionComponent}*/ />
-            
+            <Route path="/products" render={props => 
+              <ProductComponent {...props}
+                product={this.state.newProduct}
+                products={this.state.products}
+                onChangeBuyer={this.handleNewProductChangeBuyer}
+                onAdd={this.addProductDeal}
+              />} />
           </div>
         </div>
       </HashRouter>
@@ -248,6 +271,65 @@ class App extends React.Component<{}, State, AccountDelegate> {
         accounts: accountList
       }));
     });
+  };
+
+  private handleNewProductChangeBuyer = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      newProduct: {
+        ...this.state.newProduct,
+        buyer: event.target.value
+      }
+    });
+  };
+
+  private addProductDeal = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    var product = this.state.newProduct;
+
+    //const abiPath = path.resolve(__dirname, "contracts", "Deal_sol_Deal.abi");
+    //const abiPath = path.join("./", "contracts", "Deal_sol_Deal.abi");
+    //console.log(abiPath);
+    //const str = fs.readFileSync(path.join(__dirname, "filename.txt"), "utf-8");
+    //const contractAbi = fs.readFileSync(abiPath, "utf-8");
+    console.log(dealContract);
+
+    const web3Manager = Web3NodeManager.getInstance();
+    var contract = new web3Manager.eth.Contract(dealContract.abi);
+    let byteCode = dealContract.bin
+    
+    var options = {
+      from: web3Manager.eth.defaultAccount,
+      gas: 1500000,
+      gasPrice: web3Manager.utils.toWei('0.00003', 'ether')
+    };
+
+    var code = {
+      data: byteCode,
+      arguments: [this.state.newProduct.buyer]
+    }
+    
+    var result = contract.deploy(code).send(options,(error: Error, transactionHash: string) => {
+      console.log(transactionHash);
+    });
+
+    console.log(result);
+    
+    return;
+    
+    
+    //var receipt = web3Manager.eth.sendTransaction(transaction);
+    //console.log(receipt);
+  
+    this.setState(previousState => ({
+      newProduct: {
+        id: previousState.newProduct.id + 1,
+        name: "",
+        buyer: "",
+        courier: ""
+      },
+      products: [...previousState.products, previousState.newProduct]
+    }));
   };
 }
 
