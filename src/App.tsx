@@ -6,6 +6,7 @@ import {
   HashRouter
 } from "react-router-dom";
 import Web3 from 'web3';
+import {Contract, ContractOptions} from 'web3-eth-contract';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -309,11 +310,15 @@ class App extends React.Component<{}, State, AccountDelegate> {
       arguments: [this.state.newProduct.buyer]
     }
     
-    var result = contract.deploy(code).send(options,(error: Error, transactionHash: string) => {
+    var promise = contract.deploy(code).send(options,(error: Error, transactionHash: string) => {
       console.log(transactionHash);
     });
 
-    console.log(result);
+    promise.then((newContract: Contract) => {
+      contract.options.address = newContract.options.address;
+      console.log(contract);
+    });
+    
     
     return;
     
