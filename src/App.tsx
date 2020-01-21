@@ -6,7 +6,7 @@ import {
   HashRouter
 } from "react-router-dom";
 import Web3 from 'web3';
-import {Contract, ContractOptions} from 'web3-eth-contract';
+import {Contract, ContractOptions, ContractSendMethod, SendOptions} from 'web3-eth-contract';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -296,21 +296,39 @@ class App extends React.Component<{}, State, AccountDelegate> {
     console.log(dealContract);
 
     const web3Manager = Web3NodeManager.getInstance();
+    web3Manager.unlockAccountSync(this.state.account.address, this.state.account.privateKey, 600, (status: boolean) => {
+      console.log("unlocked: " + status);
+    });
+
     var contract = new web3Manager.eth.Contract(dealContract.abi);
     let byteCode = dealContract.bin
     
     var options = {
       from: web3Manager.eth.defaultAccount,
       gas: 1500000,
-      gasPrice: web3Manager.utils.toWei('0.00003', 'ether')
-    };
+      gasPrice: web3Manager.utils.toWei('0.000003', 'ether')
+    } as SendOptions;
+
+    console.log(options);
 
     var code = {
       data: byteCode,
       arguments: [this.state.newProduct.buyer]
     }
+
+    console.log(code.arguments)
     
-    var promise = contract.deploy(code).send(options,(error: Error, transactionHash: string) => {
+    var sendMethod: ContractSendMethod = contract.deploy(code);
+
+    sendMethod.estimateGas().then((estimatedGas: number) => {
+      console.log("estimated gas: " + estimatedGas);
+    });
+
+    var promise = sendMethod.send(options,(error: Error, transactionHash: string) => {
+      if(error != null){
+        console.log(error);
+        return;
+      }
       console.log(transactionHash);
     });
 
@@ -319,9 +337,7 @@ class App extends React.Component<{}, State, AccountDelegate> {
       console.log(contract);
     });
     
-    
     return;
-    
     
     //var receipt = web3Manager.eth.sendTransaction(transaction);
     //console.log(receipt);

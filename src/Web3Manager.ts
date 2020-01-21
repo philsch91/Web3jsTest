@@ -135,4 +135,9 @@ export class Web3Manager extends Web3 {
             setTimeout(this.accountDelegate.balanceDidChange, 5000, this, account);
         }
     }
+
+    public async unlockAccountSync(address: string, password: string, unlockduration: number, callback: (status: boolean) => void){
+        const unlockStatus: boolean = await this.eth.personal.unlockAccount(address, password, unlockduration);
+        callback(unlockStatus);
+    }
 }

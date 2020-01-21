@@ -10,6 +10,6 @@ export const AccountForm: React.FunctionComponent<Props> = ({
     privateKey, onPrivateKeyChange, onSwitch }) => (
     <form onSubmit={onSwitch}>
     <input onChange={onPrivateKeyChange} value={privateKey} />
-    <button type="submit">Change</button>
+    <button type="submit">Switch</button>
     </form>
 );
