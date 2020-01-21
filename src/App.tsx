@@ -305,7 +305,7 @@ class App extends React.Component<{}, State, AccountDelegate> {
     
     var options = {
       from: web3Manager.eth.defaultAccount,
-      gas: 1500000,
+      gas: 1625814,
       gasPrice: web3Manager.utils.toWei('0.000003', 'ether')
     } as SendOptions;
 
@@ -336,8 +336,6 @@ class App extends React.Component<{}, State, AccountDelegate> {
       contract.options.address = newContract.options.address;
       console.log(contract);
     });
-    
-    return;
     
     //var receipt = web3Manager.eth.sendTransaction(transaction);
     //console.log(receipt);
