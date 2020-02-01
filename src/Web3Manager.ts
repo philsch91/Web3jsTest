@@ -1,4 +1,7 @@
 import Web3 from 'web3';
+import { Contract, ContractOptions, ContractSendMethod, SendOptions, DeployOptions } from 'web3-eth-contract';
+import { Personal } from 'web3-eth-personal';
+import { Accounts } from 'web3-eth-accounts';
 import { Account } from './models/account';
 import { AccountDelegate } from './interfaces/AccountDelegate';
 

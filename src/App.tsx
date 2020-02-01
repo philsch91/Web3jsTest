@@ -1,12 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
-import {
-  Route,
-  NavLink,
-  HashRouter
-} from "react-router-dom";
+import { Route, NavLink, HashRouter } from "react-router-dom";
 import Web3 from 'web3';
-import {Contract, ContractOptions, ContractSendMethod, SendOptions} from 'web3-eth-contract';
+import { Contract, ContractOptions, ContractSendMethod, SendOptions, DeployOptions } from 'web3-eth-contract';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -301,6 +297,7 @@ class App extends React.Component<{}, State, AccountDelegate> {
     });
 
     var contract = new web3Manager.eth.Contract(dealContract.abi);
+    //var contract = new Contract(dealContract.abi);  //no connection
     let byteCode = dealContract.bin
     
     var options = {
@@ -314,7 +311,7 @@ class App extends React.Component<{}, State, AccountDelegate> {
     var code = {
       data: byteCode,
       arguments: [this.state.newProduct.buyer]
-    }
+    } as DeployOptions
 
     console.log(code.arguments)
     
