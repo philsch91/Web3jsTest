@@ -299,14 +299,6 @@ class App extends React.Component<{}, State, AccountDelegate> {
     var contract = new web3Manager.eth.Contract(dealContract.abi);
     //var contract = new Contract(dealContract.abi);  //no connection
     let byteCode = dealContract.bin
-    
-    var options = {
-      from: web3Manager.eth.defaultAccount,
-      gas: 1625814,
-      gasPrice: web3Manager.utils.toWei('0.000003', 'ether')
-    } as SendOptions;
-
-    console.log(options);
 
     var code = {
       data: byteCode,
@@ -320,6 +312,14 @@ class App extends React.Component<{}, State, AccountDelegate> {
     sendMethod.estimateGas().then((estimatedGas: number) => {
       console.log("estimated gas: " + estimatedGas);
     });
+
+    var options = {
+      from: web3Manager.eth.defaultAccount,
+      gas: 1625814,
+      gasPrice: web3Manager.utils.toWei('0.000003', 'ether')
+    } as SendOptions;
+
+    console.log(options);
 
     var promise = sendMethod.send(options,(error: Error, transactionHash: string) => {
       if(error != null){
